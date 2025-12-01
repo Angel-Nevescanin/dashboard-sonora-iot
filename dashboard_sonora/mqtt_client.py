@@ -108,6 +108,19 @@ def on_message(client, userdata, msg):
     if municipio is None or tipo is None:
         logger.warning("Topic no reconocido: %s", topic)
         return
+    
+    TIPO_MAP={
+        "temperatura": "temperatura",
+        "temp": "temperatura",
+        "humedad": "humedad",
+        "hum": "humedad",
+        "uv": "uv",
+        "uv_index": "uv",
+        "indice_uv": "uv"
+
+    }
+    tipo = TIPO_MAP.get(tipo, tipo)
+
 
     valor = None
     # Intentar parsear payload: puede ser un número, o JSON con {'value':...}
@@ -131,9 +144,9 @@ def on_message(client, userdata, msg):
 
         # no es JSON -> intentar extraer número aunque tenga texto
         try:
-            match = re,search(r"[-+]?\d*\.?\d+", payload)
+            match = re.search(r"[-+]?\d*\.?\d+", payload)
             if match:
-                valor = float(math.group())
+                valor = float(match.group())
             else:
                 raise ValueError("No numeric value found")
         except Exception:
