@@ -5,24 +5,31 @@ async function fetchAndRender() {
 
     console.log("Datos recibidos:", data);
 
-    // ✅ Convertimos el objeto en arrays
     const municipios = [];
     const temperaturas = [];
     const humedades = [];
+    const uvIndex = [];
+    const uvColors = [];
 
     Object.entries(data).forEach(([municipio, valores]) => {
       municipios.push(municipio);
       temperaturas.push(valores.temperatura ?? null);
       humedades.push(valores.humedad ?? null);
+
+      const uv = valores.uv ?? null;
+      uvIndex.push(uv);
+
+      // 🚨 alerta visual UV
+      if (uv !== null && uv >= 8) {
+        uvColors.push("rgba(255, 0, 0, 0.8)"); // rojo riesgo
+      } else {
+        uvColors.push("rgba(255, 206, 86, 0.8)"); // amarillo normal
+      }
     });
 
     const canvas = document.getElementById("tempChart");
-    if (!canvas) {
-      console.error("No se encontró el canvas");
-      return;
-    }
+    if (!canvas) return;
 
-    // ✅ Evitar múltiples gráficas encima
     if (window.chart) {
       window.chart.destroy();
     }
@@ -35,10 +42,17 @@ async function fetchAndRender() {
           {
             label: "Temperatura (°C)",
             data: temperaturas,
+            backgroundColor: "rgba(255, 99, 132, 0.7)"
           },
           {
             label: "Humedad (%)",
             data: humedades,
+            backgroundColor: "rgba(54, 162, 235, 0.7)"
+          },
+          {
+            label: "Índice UV",
+            data: uvIndex,
+            backgroundColor: uvColors
           }
         ]
       },
@@ -55,8 +69,8 @@ async function fetchAndRender() {
   }
 }
 
-// ✅ Ejecutar al cargar la página
+// ▶️ Ejecutar al cargar
 fetchAndRender();
 
-// ✅ AUTO REFRESH cada 5 segundos
+// 🔁 Auto refresh
 setInterval(fetchAndRender, 5000);
