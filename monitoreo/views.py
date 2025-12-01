@@ -1,32 +1,30 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.utils import timezone
-# Create your views here.
-# monitoreo/views.py
+from django.db.models import Max
+from .models import RegistroSensor
 
-# Simulación temporal de datos para que puedas probar el frontend
-# Más adelante reemplazaremos esto por la cache que llena mqtt_client.py
-def sample_data():
-    now = timezone.now().isoformat()
-    return {
-        "timestamp": now,
-        "municipios": [
-            {"name": "Hermosillo", "temperatura": 29.4, "humedad": 45.0},
-            {"name": "Guaymas", "temperatura": 31.1, "humedad": 40.2},
-            {"name": "Nogales", "temperatura": 26.7, "humedad": 55.6},
-        ]
-    }
 
 def dashboard(request):
-    # renderiza el template principal del dashboard
-    return render(request, 'monitoreo/dashboard.html')
+    return render(request, "monitoreo/dashboard.html")
 
-def municipios(request):
-    # renderiza la vista por municipios
-    return render(request, 'monitoreo/municipios.html')
 
 def api_datos(request):
-    # Endpoint JSON que el frontend consultará cada 3s.
-    # En producción esto devolverá datos reales (cache/DB alimentada por MQTT).
-    data = sample_data()
-    return JsonResponse(data)
+    """
+    Devuelve los últimos valores por municipio y tipo de dato
+    """
+    datos = {}
+
+    registros = (
+        RegistroSensor.objects
+        .order_by("municipio", "tipo_dato", "-fecha")
+    )
+
+    for r in registros:
+        if r.municipio not in datos:
+            datos[r.municipio] = {}
+
+        # solo el último valor de cada tipo
+        if r.tipo_dato not in datos[r.municipio]:
+            datos[r.municipio][r.tipo_dato] = r.valor
+
+    return JsonResponse(datos)
