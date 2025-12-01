@@ -3,18 +3,61 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Vista Principal - Dashboard</title>
+    <title>Dashboard Sonora IoT</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.6);
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        canvas {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #bbbbbb;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Vista Principal - Dashboard</h1>
-    
-<canvas id="tempChart"></canvas>
+<h1>🌙 Dashboard Sonora IoT</h1>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="card">
+    <canvas id="tempChart"></canvas>
+</div>
 
-<!-- TU JS -->
+<div class="footer">
+    Actualización automática cada 5 segundos
+</div>
+
 <script src="{% static 'monitoreo/js/charts.js' %}"></script>
 
 </body>

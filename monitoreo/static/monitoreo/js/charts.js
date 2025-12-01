@@ -57,3 +57,6 @@ async function fetchAndRender() {
 
 // ✅ Ejecutar al cargar la página
 fetchAndRender();
+
+// ✅ AUTO REFRESH cada 5 segundos
+setInterval(fetchAndRender, 5000);

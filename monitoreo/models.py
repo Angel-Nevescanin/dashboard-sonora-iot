@@ -6,12 +6,14 @@ class RegistroSensor(models.Model):
         ('guaymas', 'Guaymas'),
         ('nogales', 'Nogales'),
         ('obregon', 'Ciudad Obregón'),
+        ('empalme', 'Empalme')
     ]
 
     TIPOS_DATOS = [
         ('temperatura', 'Temperatura'),
         ('humedad', 'Humedad'),
         ('iluminacion', 'Iluminación'),
+        ('uv', 'Índice UV'),
     ]
 
     municipio = models.CharField(
