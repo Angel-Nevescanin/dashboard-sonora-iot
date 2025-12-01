@@ -1,34 +1,59 @@
-fetch("/api/datos/")
-  .then(response => response.json())
-  .then(data => {
+async function fetchAndRender() {
+  try {
+    const response = await fetch("/api/datos/");
+    const data = await response.json();
+
     console.log("Datos recibidos:", data);
 
-    const municipios = Object.keys(data);
-    const temperaturas = municipios.map(m =>
-      data[m].temperatura ?? null
-    );
+    // ✅ Convertimos el objeto en arrays
+    const municipios = [];
+    const temperaturas = [];
+    const humedades = [];
 
-    const ctx = document.getElementById("tempChart");
+    Object.entries(data).forEach(([municipio, valores]) => {
+      municipios.push(municipio);
+      temperaturas.push(valores.temperatura ?? null);
+      humedades.push(valores.humedad ?? null);
+    });
 
-    if (!ctx) {
+    const canvas = document.getElementById("tempChart");
+    if (!canvas) {
       console.error("No se encontró el canvas");
       return;
     }
 
-    new Chart(ctx, {
+    // ✅ Evitar múltiples gráficas encima
+    if (window.chart) {
+      window.chart.destroy();
+    }
+
+    window.chart = new Chart(canvas, {
       type: "bar",
       data: {
         labels: municipios,
-        datasets: [{
-          label: "Temperatura (°C)",
-          data: temperaturas,
-        }]
+        datasets: [
+          {
+            label: "Temperatura (°C)",
+            data: temperaturas,
+          },
+          {
+            label: "Humedad (%)",
+            data: humedades,
+          }
+        ]
       },
       options: {
-        responsive: true
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
       }
     });
-  })
-  .catch(err => {
-    console.error("Error conectando a API", err);
-  });
+
+  } catch (error) {
+    console.error("Error conectando a API", error);
+  }
+}
+
+// ✅ Ejecutar al cargar la página
+fetchAndRender();
