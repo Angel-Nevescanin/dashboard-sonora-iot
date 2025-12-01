@@ -1,0 +1,17 @@
+{% extends "monitoreo/base.html" %}
+{% block content %}
+<h3>Detalle por Municipios</h3>
+<p>Por ahora muestra lo mismo que el API de ejemplo. Después agregamos gráficas por municipio.</p>
+
+<pre id="raw" style="background:#f7f7f7; padding:12px; border-radius:6px;"></pre>
+
+<script>
+async function loadRaw() {
+  const res = await fetch("{% url 'monitoreo:api_datos' %}");
+  const data = await res.json();
+  document.getElementById('raw').innerText = JSON.stringify(data, null, 2);
+}
+loadRaw();
+setInterval(loadRaw, 3000);
+</script>
+{% endblock %}

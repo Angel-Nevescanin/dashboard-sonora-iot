@@ -1,0 +1,43 @@
+{% extends "monitoreo/base.html" %}
+{% block content %}
+<h3>Vista Principal - Dashboard</h3>
+
+<div id="status" style="margin-bottom:12px;">Conectando a la API...</div>
+
+<!-- Lugar donde mostraremos datos de prueba -->
+<div id="cards" style="display:flex; gap:12px; flex-wrap:wrap;"></div>
+
+<script>
+async function fetchAndRender() {
+  try {
+    const res = await fetch("{% url 'monitoreo:api_datos' %}");
+    const data = await res.json();
+
+    document.getElementById('status').innerText = 'Última actualización: ' + data.timestamp;
+
+    const cards = document.getElementById('cards');
+    cards.innerHTML = '';
+
+    data.municipios.forEach(m => {
+      const div = document.createElement('div');
+      div.style.border = '1px solid #ddd';
+      div.style.padding = '12px';
+      div.style.borderRadius = '8px';
+      div.style.minWidth = '180px';
+      div.innerHTML = `<strong>${m.name}</strong>
+                       <div>Temperatura: ${m.temperatura} °C</div>
+                       <div>Humedad: ${m.humedad} %</div>`;
+      cards.appendChild(div);
+    });
+  } catch (err) {
+    document.getElementById('status').innerText = 'Error conectando a API';
+    console.error(err);
+  }
+}
+
+// Primera carga
+fetchAndRender();
+// Actualiza cada 3 segundos
+setInterval(fetchAndRender, 3000);
+</script>
+{% endblock %}
