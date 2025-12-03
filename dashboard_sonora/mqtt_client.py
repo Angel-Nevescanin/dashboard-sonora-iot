@@ -18,6 +18,8 @@ import time
 import json
 import logging
 from threading import Event
+#from monitoreo.alerts import enviar_alerta_whatsapp
+
 
 # --- Configuración Django (permite usar los modelos desde script externo) ---
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
